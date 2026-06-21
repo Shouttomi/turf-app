@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: 'Hanken Grotesk', system-ui, sans-serif; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,.14); border-radius: 99px; border: 3px solid transparent; background-clip: content-box; }
+
+@keyframes fadeUp { 0% { transform: translateY(8px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes toastIn { 0% { transform: translate(-50%, 14px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes floaty2 { 0%,100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-18px) rotate(-2deg); } }
+@keyframes pulseRing { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }

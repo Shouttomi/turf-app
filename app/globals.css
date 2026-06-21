@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -12,3 +13,10 @@ body { font-family: 'Hanken Grotesk', system-ui, sans-serif; }
 @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
 @keyframes floaty2 { 0%,100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-18px) rotate(-2deg); } }
 @keyframes pulseRing { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }
+
+/* ---- Owner Console ---- */
+@keyframes erpPop { 0% { transform: scale(.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes erpSlideR { 0% { transform: translateX(40px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes erpFade { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes erpRing { 0% { transform: scale(.8); opacity: .7; } 100% { transform: scale(2.2); opacity: 0; } }
+@keyframes erpToast { 0% { transform: translateY(40px) scale(.95); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }

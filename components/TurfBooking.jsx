@@ -167,7 +167,8 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
           </div>
           <div style={css('display:flex; align-items:center; gap:8px;')}>
             <Hov as="button" onClick={() => goTo('booking')} s="cursor:pointer; display:flex; align-items:center; gap:7px; background:transparent; border:none; padding:9px 14px; border-radius:8px; color:var(--ink-2); font-family:inherit; font-weight:600; font-size:13.5px;" hover="background:var(--surface-2);">See a live page</Hov>
-            <Hov as="button" onClick={() => goTo('booking')} s="display:flex; align-items:center; gap:7px; border:none; cursor:pointer; padding:9px 16px; border-radius:8px; background:var(--ink); color:#fff; font-family:inherit; font-weight:700; font-size:13.5px;" hover="background:#000;">Owner login</Hov>
+            <Hov as="a" href="/console" s="display:flex; align-items:center; gap:7px; text-decoration:none; border:1px solid var(--line-2); padding:9px 15px; border-radius:8px; background:var(--surface); color:var(--ink); font-family:inherit; font-weight:700; font-size:13.5px;" hover="background:var(--surface-2);"><Raw html={'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'} />Bookings</Hov>
+            <Hov as="a" href="/console" s="display:flex; align-items:center; gap:7px; text-decoration:none; border:none; cursor:pointer; padding:9px 16px; border-radius:8px; background:var(--ink); color:#fff; font-family:inherit; font-weight:700; font-size:13.5px;" hover="background:#000;">Owner login</Hov>
           </div>
         </div>
       </nav>

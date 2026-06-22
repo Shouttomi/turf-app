@@ -11,7 +11,6 @@ import {
 
 export default function OwnerConsole({ brandName = 'TurfSprint' }) {
   const [view, setView] = useState('dashboard');
-  const [vw, setVw] = useState(1280);
   const [notifOpen, setNotifOpen] = useState(false);
   const [filter, setFilter] = useState('all');
   const [drawerId, setDrawerId] = useState(null);
@@ -24,12 +23,7 @@ export default function OwnerConsole({ brandName = 'TurfSprint' }) {
   const [notifs, setNotifs] = useState(seedNotifs);
   const toastT = useRef(null);
 
-  useEffect(() => {
-    const onResize = () => setVw(window.innerWidth);
-    onResize();
-    window.addEventListener('resize', onResize);
-    return () => { window.removeEventListener('resize', onResize); clearTimeout(toastT.current); };
-  }, []);
+  useEffect(() => () => clearTimeout(toastT.current), []);
 
   const flash = (msg, type) => {
     setToast(msg); setToastType(type || 'success');
@@ -46,7 +40,6 @@ export default function OwnerConsole({ brandName = 'TurfSprint' }) {
   };
 
   // ---- derived ----
-  const isMobile = vw < 860;
   const pending = bookings.filter((b) => b.status === 'pending');
   const approved = bookings.filter((b) => b.status === 'approved');
   const rejected = bookings.filter((b) => b.status === 'rejected');
@@ -201,8 +194,7 @@ export default function OwnerConsole({ brandName = 'TurfSprint' }) {
   return (
     <div style={css(ROOT_VARS_ERP)}>
       {/* ===== SIDEBAR ===== */}
-      {!isMobile && (
-        <aside style={css('width:248px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--line); height:100vh; position:sticky; top:0; display:flex; flex-direction:column; padding:20px 16px;')}>
+      <aside className="erp-sidebar" style={css('width:248px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--line); height:100vh; position:sticky; top:0; display:flex; flex-direction:column; padding:20px 16px;')}>
           <div style={css('display:flex; align-items:center; gap:11px; padding:6px 8px 22px;')}>
             <div style={css('width:40px; height:40px; border-radius:12px; background:linear-gradient(145deg, var(--turf), var(--turf-deep)); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 16px -6px var(--turf);')}>
               <Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" opacity=".55"/><circle cx="12" cy="12" r="3.2" fill="#fff" stroke="none"/></svg>'} />
@@ -240,7 +232,6 @@ export default function OwnerConsole({ brandName = 'TurfSprint' }) {
             </div>
           </div>
         </aside>
-      )}
 
       {/* ===== MAIN ===== */}
       <main style={css('flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;')}>
@@ -470,15 +461,13 @@ export default function OwnerConsole({ brandName = 'TurfSprint' }) {
       </main>
 
       {/* ===== MOBILE BOTTOM NAV ===== */}
-      {isMobile && (
-        <div style={css('position:fixed; left:0; right:0; bottom:0; z-index:50; background:color-mix(in srgb,var(--surface) 95%,transparent); backdrop-filter:blur(12px); border-top:1px solid var(--line); display:flex; justify-content:space-around; padding:8px 6px calc(8px + env(safe-area-inset-bottom));')}>
+      <div className="erp-bottomnav" style={css('position:fixed; left:0; right:0; bottom:0; z-index:50; background:color-mix(in srgb,var(--surface) 95%,transparent); backdrop-filter:blur(12px); border-top:1px solid var(--line); display:flex; justify-content:space-around; padding:8px 6px calc(8px + env(safe-area-inset-bottom));')}>
           <button onClick={() => navTo('dashboard')} style={css(navMStyleOf('dashboard'))}><span style={css('position:relative;')}><Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>'} /></span><span style={css('font-size:10px; font-weight:800;')}>Home</span></button>
           <button onClick={() => navTo('bookings')} style={css(navMStyleOf('bookings'))}><span style={css('position:relative;')}><Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'} />{pendingBadge && <span style={css('position:absolute; top:-6px; right:-9px; background:var(--rose); color:#fff; font-size:9px; font-weight:800; min-width:15px; height:15px; padding:0 4px; border-radius:99px; display:flex; align-items:center; justify-content:center;')}>{pendingBadge}</span>}</span><span style={css('font-size:10px; font-weight:800;')}>Bookings</span></button>
           <button onClick={() => navTo('schedule')} style={css(navMStyleOf('schedule'))}><span style={css('position:relative;')}><Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="17" rx="2"/></svg>'} /></span><span style={css('font-size:10px; font-weight:800;')}>Schedule</span></button>
           <button onClick={() => navTo('turfs')} style={css(navMStyleOf('turfs'))}><span style={css('position:relative;')}><Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>'} /></span><span style={css('font-size:10px; font-weight:800;')}>Turfs</span></button>
           <button onClick={() => navTo('payments')} style={css(navMStyleOf('payments'))}><span style={css('position:relative;')}><Raw html={'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'} /></span><span style={css('font-size:10px; font-weight:800;')}>Pay</span></button>
         </div>
-      )}
 
       {/* ===== BOOKING DRAWER ===== */}
       {drawer && (

@@ -20,3 +20,18 @@ body { font-family: 'Hanken Grotesk', system-ui, sans-serif; }
 @keyframes erpFade { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
 @keyframes erpRing { 0% { transform: scale(.8); opacity: .7; } 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes erpToast { 0% { transform: translateY(40px) scale(.95); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+
+/* ---- Responsive nav (CSS-driven so the first paint is already correct — no flash) ---- */
+/* Public-site top nav (breakpoint 640px) */
+.tbn-short { display: none; }
+@media (max-width: 639px) {
+  .tbn-see { display: none !important; }
+  .tbn-label { display: none !important; }
+  .tbn-full { display: none !important; }
+  .tbn-short { display: inline !important; }
+  .tbn-link { padding: 9px 11px !important; }
+  .tbn-login { padding: 9px 14px !important; }
+}
+/* Owner Console sidebar vs. bottom nav (breakpoint 860px) */
+@media (max-width: 859px) { .erp-sidebar { display: none !important; } }
+@media (min-width: 860px) { .erp-bottomnav { display: none !important; } }

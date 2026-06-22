@@ -24,12 +24,24 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState(null);
+  const [vw, setVw] = useState(1280);
 
   const toastT = useRef(null);
   const submitT = useRef(null);
   const sceneRef = useRef(null);
 
-  useEffect(() => () => { clearTimeout(toastT.current); clearTimeout(submitT.current); }, []);
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      clearTimeout(toastT.current);
+      clearTimeout(submitT.current);
+    };
+  }, []);
+
+  const isMobile = vw < 640;
 
   const flash = (msg) => {
     setToast(msg);
@@ -84,7 +96,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
   const hasDisc = hours >= 2 && TURF.multiHourDiscount > 0;
   const discN = hasDisc ? Math.round((subtotalN * TURF.multiHourDiscount) / 100) : 0;
   const totalN = subtotalN - discN;
-  const selSummary = sel.length ? hourLabel(sel[0]) + (sel.length > 1 ? ' +' + (sel.length - 1) : '') : '—';
+  const selSummary = sel.length ? hourLabel(sel[0]) + (sel.length > 1 ? ' +' + (sel.length - 1) : '') : 'None';
 
   const payNowN = pay === 'advance_payment' ? TURF.advanceAmount * sel.length : pay === 'full_payment' ? totalN : 0;
   const venueDueN = totalN - payNowN;
@@ -141,10 +153,10 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
   const steps = [
     { n: '1', title: 'Add your turf', body: 'Upload photos, set your price per hour, sports and operating hours. Add your UPI ID for payments.' },
     { n: '2', title: 'Open your slots', body: 'Generate daily time slots in a tap. Block out maintenance or fixed games whenever you need.' },
-    { n: '3', title: 'Share the link', body: 'Drop your booking link in your Instagram bio and WhatsApp. Customers book and pay — you just confirm.' },
+    { n: '3', title: 'Share the link', body: 'Drop your booking link in your Instagram bio and WhatsApp. Customers book and pay, then you just confirm.' },
   ];
   const features = [
-    { title: 'Book straight from Instagram', body: 'One link in your bio turns followers into paying bookings — no app for them to download.', icon: FEATURE_ICONS.ig },
+    { title: 'Book straight from Instagram', body: 'One link in your bio turns followers into paying bookings, with no app for them to download.', icon: FEATURE_ICONS.ig },
     { title: 'UPI payments & proof', body: 'Customers pay by UPI QR and upload the screenshot. Take full, advance, or pay-at-turf.', icon: FEATURE_ICONS.upi },
     { title: 'WhatsApp at the centre', body: 'Every booking opens a WhatsApp chat so you confirm and coordinate the way you already do.', icon: FEATURE_ICONS.wa },
     { title: 'Live slot availability', body: 'Booked slots grey out instantly. No double bookings, no manual diary, no missed calls.', icon: FEATURE_ICONS.clock },
@@ -165,10 +177,12 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
             </div>
             <div style={css('font-weight:800; font-size:18px; letter-spacing:-.02em;')}>{brandName}</div>
           </div>
-          <div style={css('display:flex; align-items:center; gap:8px;')}>
-            <Hov as="button" onClick={() => goTo('booking')} s="cursor:pointer; display:flex; align-items:center; gap:7px; background:transparent; border:none; padding:9px 14px; border-radius:8px; color:var(--ink-2); font-family:inherit; font-weight:600; font-size:13.5px;" hover="background:var(--surface-2);">See a live page</Hov>
-            <Hov as="a" href="/console" s="display:flex; align-items:center; gap:7px; text-decoration:none; border:1px solid var(--line-2); padding:9px 15px; border-radius:8px; background:var(--surface); color:var(--ink); font-family:inherit; font-weight:700; font-size:13.5px;" hover="background:var(--surface-2);"><Raw html={'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'} />Bookings</Hov>
-            <Hov as="a" href="/console" s="display:flex; align-items:center; gap:7px; text-decoration:none; border:none; cursor:pointer; padding:9px 16px; border-radius:8px; background:var(--ink); color:#fff; font-family:inherit; font-weight:700; font-size:13.5px;" hover="background:#000;">Owner login</Hov>
+          <div style={css('display:flex; align-items:center; gap:' + (isMobile ? '7px' : '8px') + ';')}>
+            {!isMobile && (
+              <Hov as="button" onClick={() => goTo('booking')} s="cursor:pointer; display:flex; align-items:center; gap:7px; background:transparent; border:none; padding:9px 14px; border-radius:8px; color:var(--ink-2); font-family:inherit; font-weight:600; font-size:13.5px;" hover="background:var(--surface-2);">See a live page</Hov>
+            )}
+            <Hov as="a" href="/console" title="Bookings" s={'display:flex; align-items:center; gap:7px; text-decoration:none; border:1px solid var(--line-2); padding:' + (isMobile ? '9px 11px' : '9px 15px') + '; border-radius:8px; background:var(--surface); color:var(--ink); font-family:inherit; font-weight:700; font-size:13.5px;'} hover="background:var(--surface-2);"><Raw html={'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'} />{!isMobile && 'Bookings'}</Hov>
+            <Hov as="a" href="/console" s={'display:flex; align-items:center; gap:7px; text-decoration:none; border:none; cursor:pointer; padding:' + (isMobile ? '9px 14px' : '9px 16px') + '; border-radius:8px; background:var(--ink); color:#fff; font-family:inherit; font-weight:700; font-size:13.5px;'} hover="background:#000;">{isMobile ? 'Login' : 'Owner login'}</Hov>
           </div>
         </div>
       </nav>
@@ -184,7 +198,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
                   <span style={css('width:7px; height:7px; border-radius:50%; background:var(--brand);')} />For turf &amp; ground owners
                 </div>
                 <h1 style={css('font-weight:800; font-size:clamp(30px,4.6vw,50px); line-height:1.03; letter-spacing:-.03em; margin:0 0 16px; max-width:15ch;')}>Your booking page, ready for Instagram &amp; WhatsApp.</h1>
-                <p style={css('font-size:clamp(15px,1.7vw,18px); line-height:1.5; color:var(--muted); max-width:48ch; margin:0 0 28px;')}>List your turf once and get a single link. Drop it in your Instagram bio or WhatsApp — customers pick a slot, pay by UPI, and book directly. No back-and-forth, no commission.</p>
+                <p style={css('font-size:clamp(15px,1.7vw,18px); line-height:1.5; color:var(--muted); max-width:48ch; margin:0 0 28px;')}>List your turf once and get a single link. Drop it in your Instagram bio or WhatsApp. Customers pick a slot, pay by UPI, and book directly. No back-and-forth, no commission.</p>
                 <div style={css('display:flex; gap:11px; flex-wrap:wrap;')}>
                   <Hov as="button" onClick={() => goTo('booking')} s="border:none; cursor:pointer; padding:15px 26px; border-radius:9px; background:var(--brand); color:#fff; font-family:inherit; font-weight:700; font-size:15.5px; display:flex; align-items:center; gap:8px;" hover="background:var(--brand-deep);">List your turf<Raw html={'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'} /></Hov>
                   <Hov as="button" onClick={() => goTo('booking')} s="cursor:pointer; border:1px solid var(--line-2); padding:15px 24px; border-radius:9px; background:var(--surface); color:var(--ink); font-family:inherit; font-weight:700; font-size:15.5px;" hover="background:var(--surface-2);">See a live page</Hov>
@@ -282,7 +296,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
           <section style={css('max-width:1180px; margin:0 auto; padding:clamp(44px,5vw,72px) clamp(16px,4vw,32px);')}>
             <div style={css('background:var(--ink); border-radius:18px; padding:clamp(32px,4vw,52px); text-align:center; color:#fff;')}>
               <h2 style={css('font-weight:800; font-size:clamp(24px,3vw,36px); letter-spacing:-.025em; margin:0 0 12px;')}>Get your booking link today.</h2>
-              <p style={css('color:rgba(255,255,255,.7); font-size:15.5px; line-height:1.5; max-width:46ch; margin:0 auto 26px;')}>Free to set up. Add your turf, slots and UPI — share the link everywhere your customers already are.</p>
+              <p style={css('color:rgba(255,255,255,.7); font-size:15.5px; line-height:1.5; max-width:46ch; margin:0 auto 26px;')}>Free to set up. Add your turf, slots and UPI, then share the link everywhere your customers already are.</p>
               <div style={css('display:flex; gap:11px; justify-content:center; flex-wrap:wrap;')}>
                 <Hov as="button" onClick={() => goTo('booking')} s="border:none; cursor:pointer; padding:15px 28px; border-radius:9px; background:var(--brand); color:#fff; font-family:inherit; font-weight:700; font-size:15.5px;" hover="background:var(--brand-deep);">List your turf</Hov>
                 <Hov as="button" onClick={() => goTo('booking')} s="cursor:pointer; border:1px solid rgba(255,255,255,.25); padding:15px 26px; border-radius:9px; background:transparent; color:#fff; font-family:inherit; font-weight:700; font-size:15.5px;" hover="background:rgba(255,255,255,.08);">Preview a live page</Hov>
@@ -299,7 +313,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
             <div style={css('background:var(--brand-soft); border-bottom:1px solid var(--line);')}>
               <div style={css('max-width:1080px; margin:0 auto; padding:9px clamp(16px,4vw,32px); display:flex; align-items:center; gap:9px; justify-content:center; font-size:12.5px; font-weight:600; color:var(--brand-deep); text-align:center;')}>
                 <Raw html={'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v0"/></svg>'} />
-                This is a live example of a turf&apos;s booking page — the link an owner shares on Instagram &amp; WhatsApp.
+                This is a live example of a turf&apos;s booking page, the link an owner shares on Instagram &amp; WhatsApp.
               </div>
             </div>
 
@@ -375,7 +389,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
                   <div style={css('display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px;')}>
                     {[
                       { label: 'Grounds', value: TURF.grounds.length + ' grounds' },
-                      { label: 'Hours', value: '6 AM–11 PM' },
+                      { label: 'Hours', value: '6 AM to 11 PM' },
                       { label: 'Sports', value: '5 sports' },
                     ].map((qs, i) => (
                       <div key={i} style={css('flex:1; min-width:130px; background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:13px 15px;')}>
@@ -525,7 +539,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
                     {proof ? (
                       <div style={css('display:flex; align-items:center; gap:11px; justify-content:center;')}>
                         <Raw html={'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'} />
-                        <span style={css('font-weight:700; font-size:13.5px; color:var(--brand-deep);')}>Screenshot added — tap to change</span>
+                        <span style={css('font-weight:700; font-size:13.5px; color:var(--brand-deep);')}>Screenshot added, tap to change</span>
                       </div>
                     ) : (
                       <div style={css('display:flex; flex-direction:column; align-items:center; gap:8px;')}>
@@ -563,7 +577,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
               <div style={css('padding-top:15px; display:flex; flex-direction:column; gap:8px;')}>
                 <div style={css('display:flex; justify-content:space-between; font-size:13.5px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums;')}><span>{fmt(activeG.priceN)} × {sel.length} hr</span><span>{fmt(subtotalN)}</span></div>
                 {hasDisc && (
-                  <div style={css('display:flex; justify-content:space-between; font-size:13.5px; font-weight:600; color:var(--brand-deep); font-variant-numeric:tabular-nums;')}><span>{discountLabel}</span><span>– {fmt(discN)}</span></div>
+                  <div style={css('display:flex; justify-content:space-between; font-size:13.5px; font-weight:600; color:var(--brand-deep); font-variant-numeric:tabular-nums;')}><span>{discountLabel}</span><span>-{fmt(discN)}</span></div>
                 )}
                 <div style={css('display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:11px; margin-top:3px;')}><span style={css('font-weight:700; font-size:15px;')}>Total</span><span style={css('font-weight:800; font-size:23px; font-variant-numeric:tabular-nums;')}>{fmt(totalN)}</span></div>
                 <div style={css('display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; color:var(--ink-2); font-variant-numeric:tabular-nums;')}><span>{pay === 'advance_payment' ? 'Advance now' : 'Pay now'}</span><span>{fmt(payNowN)}</span></div>
@@ -614,7 +628,7 @@ export default function TurfBooking({ brandName = 'TurfSprint', accentColor = '#
             <div style={css('display:flex; flex-direction:column; gap:9px;')}>
               <Hov as="button" onClick={copyLink} s="cursor:pointer; display:flex; align-items:center; gap:11px; border:1px solid var(--line-2); background:var(--surface); padding:13px 15px; border-radius:11px; font-family:inherit; font-weight:700; font-size:14px; color:var(--ink); text-align:left;" hover="background:var(--surface-2);"><span style={css('width:34px; height:34px; border-radius:9px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; color:var(--ink-2);')}><Raw html={'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'} /></span>{copied ? 'Link copied' : 'Copy booking link'}</Hov>
               <Hov as="a" href={waShareLink} target="_blank" s="text-decoration:none; cursor:pointer; display:flex; align-items:center; gap:11px; border:1px solid var(--line-2); background:var(--surface); padding:13px 15px; border-radius:11px; font-family:inherit; font-weight:700; font-size:14px; color:var(--ink);" hover="background:var(--surface-2);"><span style={css('width:34px; height:34px; border-radius:9px; background:var(--wa); display:flex; align-items:center; justify-content:center; color:#fff;')}><Raw html={waSvg(17)} /></span>Share on WhatsApp</Hov>
-              <Hov as="button" onClick={() => flash('Story image ready — opening Instagram')} s="cursor:pointer; display:flex; align-items:center; gap:11px; border:1px solid var(--line-2); background:var(--surface); padding:13px 15px; border-radius:11px; font-family:inherit; font-weight:700; font-size:14px; color:var(--ink); text-align:left;" hover="background:var(--surface-2);"><span style={css('width:34px; height:34px; border-radius:9px; background:var(--ig); display:flex; align-items:center; justify-content:center; color:#fff;')}><Raw html={'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>'} /></span>Add to Instagram story</Hov>
+              <Hov as="button" onClick={() => flash('Story image ready, opening Instagram')} s="cursor:pointer; display:flex; align-items:center; gap:11px; border:1px solid var(--line-2); background:var(--surface); padding:13px 15px; border-radius:11px; font-family:inherit; font-weight:700; font-size:14px; color:var(--ink); text-align:left;" hover="background:var(--surface-2);"><span style={css('width:34px; height:34px; border-radius:9px; background:var(--ig); display:flex; align-items:center; justify-content:center; color:#fff;')}><Raw html={'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>'} /></span>Add to Instagram story</Hov>
             </div>
           </div>
         </div>

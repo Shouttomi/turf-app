@@ -1,7 +1,7 @@
 import OwnerConsole from '@/components/OwnerConsole';
 
 export const metadata = {
-  title: 'Owner Console — TurfSprint',
+  title: 'Owner Console · TurfSprint',
 };
 
 export default function ConsolePage() {
